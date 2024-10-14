@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import NavBar from "./components/navBar";
 
 export const metadata: Metadata = {
   title: "Projeto Amazônia",
@@ -13,7 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <NavBar />
+        <main className="bg-green-50 text-zinc-50">{children}</main>
+      </body>
     </html>
   );
 }
