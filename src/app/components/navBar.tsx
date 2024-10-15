@@ -11,7 +11,7 @@ export default function NavBar() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center ">
             <div className="flex-shrink-0">
-              <a href="/" className="text-green-50 hover:text-black">
+              <a href="/" className="text-green-50 hover:text-green-400 ">
                 <TreeDeciduous />
               </a>
             </div>
