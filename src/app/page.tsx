@@ -11,9 +11,9 @@ export default function Home() {
 
   return (
     <>
-      <div className="bg-white m-2 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 rounded-lg ">
+      <div className="bg-white m-2 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 rounded-lg h-screen">
         <div className="flex p-2">
-          <h1 className="text-black text-xl">Árvores Cadastras</h1>
+          <h1 className="text-black text-xl">Árvores Cadastradas</h1>
         </div>
         <div className="flex p-2 flex-col ">
           {list.map((item) => {
