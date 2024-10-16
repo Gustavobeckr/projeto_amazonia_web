@@ -11,20 +11,20 @@ export default function Home() {
 
   return (
     <>
-      <div className="bg-white m-2 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 rounded-lg h-screen">
+      <div className="bg-zinc-100 m-2 max-w-7xl mx-auto p-4 sm:px-6 lg:px-8 rounded-lg h-screen shadow-xl">
         <div className="flex p-2">
-          <h1 className="text-black text-xl">Árvores Cadastradas</h1>
+          <h1 className="text-black text-2xl">Árvores Cadastradas</h1>
         </div>
-        <div className="flex p-2 flex-col ">
+        <div className="flex gap-2 flex-col ">
           {list.map((item) => {
             return (
               <a
                 key={item.id}
-                href="/detalhes"
-                className="flex p-1 h-20 my-1 bg-green-50 rounded-lg items-center space-x-2  hover:bg-green-100 hover:font-bold"
+                href={`/detalhes/` + item.id}
+                className="flex p-1 h-20 my-1 bg-green-500 rounded-lg items-center space-x-2  hover:bg-green-600 hover:font-bold shadow-md"
               >
-                <TreeDeciduous />
-                <h1 className="text-black text-sm">{item.title}</h1>
+                <TreeDeciduous className="text-white" />
+                <h1 className="text-white text-lg">{item.title}</h1>
               </a>
             );
           })}
