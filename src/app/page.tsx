@@ -21,7 +21,7 @@ export default function Home() {
               <a
                 key={item.id}
                 href={`/detalhes/` + item.id}
-                className="flex p-1 h-20 my-1 bg-green-500 rounded-lg items-center space-x-2  hover:bg-green-600 hover:font-bold shadow-md"
+                className="flex p-1 h-20 my-1 bg-green-700 rounded-lg items-center space-x-2  hover:bg-green-800 hover:font-bold shadow-md"
               >
                 <TreeDeciduous className="text-white" />
                 <h1 className="text-white text-lg">{item.title}</h1>
