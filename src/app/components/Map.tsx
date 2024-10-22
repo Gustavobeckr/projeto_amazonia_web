@@ -45,7 +45,6 @@ export default function Map({ places }: MaProps) {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <MarkerPointMap setPosition={setPosition} />
-      <Marker position={[-3.4001527, -62.3965349]} />
       {position && <Marker position={[position.lat, position.lng]} />}
       {places?.map(({ id, name, location }, index) => {
         const { latitude, longitude } = location;
@@ -60,16 +59,11 @@ export default function Map({ places }: MaProps) {
 function MarkerPointMap({
   setPosition,
 }: {
-  position?: LatLng | null;
   setPosition: Dispatch<SetStateAction<LatLng | null>>;
 }) {
   const map = useMapEvents({
-    click: () => {
-      map.locate();
-    },
-    locationfound: (location) => {
-      setPosition(location.latlng);
-      console.log("location found:", location);
+    click: (e) => {
+      setPosition(e.latlng);
     },
   });
 
