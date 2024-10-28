@@ -7,44 +7,35 @@ import Modal from "../components/Modal";
 import { useState } from "react";
 import { MapPin, X } from "lucide-react";
 import dynamic from "next/dynamic";
+import {
+  CadastroFormData,
+  cadastroFormSchema,
+} from "../components/Form/validator/zod";
+import { useCadastroArvore } from "../hooks/useCadastro";
 
 const Map = dynamic(() => import("../components/Map"), { ssr: false });
 
-const mimeTypePermitido = ["image/png", "image/jpeg"];
-
-const cadastroFormSchema = z.object({
-  nomeArvore: z.string().min(3, "Nome da árvore é obrigatório!"),
-  descrBotanica: z.string().min(3, "Descrição da botânica é obrigatório!"),
-  imagem: z
-    .custom<FileList>()
-    .transform((list) => list.item(0))
-    .refine(
-      (file) => mimeTypePermitido.includes(file?.type!),
-      "São permitidas apenas imagens do tipo png e jpeg!"
-    ),
-});
-
-export type CadastroFormData = z.infer<typeof cadastroFormSchema>;
-
 export default function Cadastro() {
   const [openModal, setOpenModal] = useState(false);
+  const { cadastrarArvore, position, setPosition, serviceError } =
+    useCadastroArvore();
 
   const createArvoreForm = useForm<CadastroFormData>({
     resolver: zodResolver(cadastroFormSchema),
   });
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = createArvoreForm;
 
-  const onSubmit = (data: CadastroFormData) => {
-    console.log(data.imagem);
+  const { register, handleSubmit, setValue } = createArvoreForm;
+
+  const onSubmit = async (data: CadastroFormData) => {
+    await cadastrarArvore(data);
   };
 
   return (
-    <div className="bg-zinc-100 m-2 p-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 rounded-lg h-screen shadow-lg">
+    <div className="bg-zinc-100 m-2 p-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 rounded-lg  shadow-lg">
       <FormProvider {...createArvoreForm}>
+        <Form.Label className="flex mx-2 h-4 items-center font-semibold text-3xl">
+          Cadastro de Árvores
+        </Form.Label>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col ">
           <div className="flex flex-row gap-5">
             <Form.Column>
@@ -59,46 +50,83 @@ export default function Cadastro() {
                 </Form.Label>
                 <textarea
                   rows={3}
-                  className=" border border-zinc-300 rounded-sm shadow-sm p-1"
+                  className=" border border-zinc-300 rounded-sm shadow-sm p-1 max-w-lg"
                   {...register("descrBotanica")}
                 />
                 <Form.ErrorMessage field="descrBotanica" />
               </Form.Field>
               <Form.Field>
-                <Form.Label htmlFor="nomeArvore">Ocorrência natural</Form.Label>
+                <Form.Label htmlFor="localArvore">
+                  Ocorrência natural
+                </Form.Label>
                 <button
                   type="button"
                   onClick={() => setOpenModal(!openModal)}
-                  className="bg-zinc-300 rounded-md p-2  text-sm hover:bg-zinc-400"
+                  className="bg-zinc-300 rounded-md p-2  text-sm hover:bg-green-300 max-w-lg"
                 >
                   Selecione uma localização
                 </button>
                 <Modal isOpen={openModal} mapaEscolherLocal={true}>
-                  <header className="flex items-center justify-between">
+                  <div className="flex items-center justify-between">
                     <h1 className="text-zinc-800 text-lg">
                       Selecione uma localização para a árvore
                     </h1>
                     <a
                       className="hover:text-red-500 hover:shadow-lg rounded-lg m-1"
-                      onClick={() => setOpenModal(!openModal)}
+                      onClick={() => {
+                        setPosition(null);
+                        setOpenModal(false);
+                      }}
                     >
                       <X />
                     </a>
-                  </header>
+                  </div>
 
-                  <Map />
+                  <Map position={position} setPosition={setPosition} />
+                  <button
+                    onClick={() => {
+                      setValue("localArvore", position!);
+                      setOpenModal(false);
+                    }}
+                    className="m-4 p-2 bg-emerald-400 rounded-md shadow-md hover:bg-emerald-500"
+                    type="button"
+                  >
+                    Selecionar
+                  </button>
                 </Modal>
-                <Form.ErrorMessage field="nomeArvore" />
+                <Form.ErrorMessage field="localArvore" />
               </Form.Field>
-            </Form.Column>
-            <Form.Column>
+              <Form.Field>
+                <Form.Label htmlFor="bioReprodutiva">
+                  Biologia Reprodutiva
+                </Form.Label>
+                <Form.Input type="text" name="bioReprodutiva" />
+                <Form.ErrorMessage field="bioReprodutiva" />
+              </Form.Field>
+              <Form.Field>
+                <Form.Label htmlFor="aspecEco">Aspectos ecológicos</Form.Label>
+                <Form.Input type="text" name="aspecEco" />
+                <Form.ErrorMessage field="aspecEco" />
+              </Form.Field>
+              <Form.Field>
+                <Form.Label htmlFor="regenNatural">
+                  Regeneração natural
+                </Form.Label>
+                <Form.Input type="text" name="regenNatural" />
+                <Form.ErrorMessage field="regenNatural" />
+              </Form.Field>
+              <Form.Field>
+                <Form.Label htmlFor="paisagismo">Paisagismo</Form.Label>
+                <Form.Input type="text" name="paisagismo" />
+                <Form.ErrorMessage field="paisagismo" />
+              </Form.Field>
               <Form.Field>
                 <Form.Label htmlFor="imagem">Foto da Árvore</Form.Label>
                 <Form.Input
-                  className="block w-full text-sm text-slate-500
+                  className="block max-w-lg text-sm text-slate-500
                         file:mr-4 file:py-2 file:px-4
                         file:rounded-md file:border-0
-                        file:text-sm file:font-semibold
+                        file:text-sm 
                         file:bg-zinc-300 
                         hover:file:bg-green-300"
                   type="file"
@@ -108,7 +136,60 @@ export default function Cadastro() {
                 <Form.ErrorMessage field="imagem" />
               </Form.Field>
             </Form.Column>
+            <Form.Column>
+              <Form.Label className="text-md font-semibold">
+                Aproveitamento
+              </Form.Label>
+              <Form.Field>
+                <Form.Label htmlFor="alimentacao">Alimentação</Form.Label>
+                <Form.Input type="text" name="alimentacao" />
+                <Form.ErrorMessage field="alimentacao" />
+              </Form.Field>
+              <Form.Field>
+                <Form.Label htmlFor="bioTec">
+                  Biotecnológico energético
+                </Form.Label>
+                <Form.Input type="text" name="bioTec" />
+                <Form.ErrorMessage field="bioTec" />
+              </Form.Field>
+              <Form.Field>
+                <Form.Label htmlFor="bioAtividade">Bioatividade</Form.Label>
+                <Form.Input type="text" name="bioAtividade" />
+                <Form.ErrorMessage field="bioAtividade" />
+              </Form.Field>
+
+              <Form.Label className="text-md font-semibold my-4">
+                Cultivo em viveiros
+              </Form.Label>
+              <Form.Field>
+                <Form.Label htmlFor="colheita">
+                  Colheita e beneficiamento de sementes
+                </Form.Label>
+                <Form.Input type="text" name="colheita" />
+                <Form.ErrorMessage field="colheita" />
+              </Form.Field>
+              <Form.Field>
+                <Form.Label htmlFor="prodMudas">Produção de mudas</Form.Label>
+                <Form.Input type="text" name="prodMudas" />
+                <Form.ErrorMessage field="prodMudas" />
+              </Form.Field>
+              <Form.Field>
+                <Form.Label htmlFor="trasnplante">Transplante</Form.Label>
+                <Form.Input type="text" name="trasnplante" />
+                <Form.ErrorMessage field="trasnplante" />
+              </Form.Field>
+              <Form.Field>
+                <Form.Label htmlFor="cuidados">Cuidados especiais</Form.Label>
+                <Form.Input type="text" name="cuidados" />
+                <Form.ErrorMessage field="cuidados" />
+              </Form.Field>
+            </Form.Column>
           </div>
+          {serviceError && (
+            <span className="text-sm text-red-500 mt-1">
+              Erro ao tentar cadastrar árvore!
+            </span>
+          )}
           <button
             type="submit"
             className="m-4 p-2 bg-emerald-400 rounded-md shadow-md hover:bg-emerald-500"
