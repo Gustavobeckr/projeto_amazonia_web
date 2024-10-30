@@ -1,4 +1,4 @@
-import L, { LatLng } from "leaflet";
+import { LatLng } from "leaflet";
 import { Dispatch, SetStateAction } from "react";
 import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
 
@@ -12,7 +12,7 @@ type Places = {
   };
 };
 
-type MaProps = {
+type MapProps = {
   places?: Places[];
   position: LatLng | null;
   setPosition: Dispatch<SetStateAction<LatLng | null>>;
@@ -28,7 +28,7 @@ type MaProps = {
 //   popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
 // });
 
-export default function Map({ places, position, setPosition }: MaProps) {
+export default function Map({ places, position, setPosition }: MapProps) {
   return (
     <MapContainer
       center={[-3.4001527, -62.3965349]}
@@ -41,7 +41,7 @@ export default function Map({ places, position, setPosition }: MaProps) {
       />
       <MarkerPointMap setPosition={setPosition} />
       {position && <Marker position={[position.lat, position.lng]} />}
-      {places?.map(({ id, name, location }, index) => {
+      {places?.map(({ id, name, location }) => {
         const { latitude, longitude } = location;
         return (
           <Marker key={id} position={[latitude, longitude]} title={name} />
@@ -56,7 +56,7 @@ function MarkerPointMap({
 }: {
   setPosition: Dispatch<SetStateAction<LatLng | null>>;
 }) {
-  const map = useMapEvents({
+  useMapEvents({
     click: (e) => {
       setPosition(e.latlng);
     },

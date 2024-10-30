@@ -1,21 +1,28 @@
 "use client";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
-import { Form } from "../components/Form";
-import Modal from "../components/Modal";
-import { useState } from "react";
-import { MapPin, X } from "lucide-react";
+import Modal from "../../components/Modal";
+import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useCadastroArvore } from "../../hooks/useCadastro";
 import {
   CadastroFormData,
   cadastroFormSchema,
-} from "../components/Form/validator/zod";
-import { useCadastroArvore } from "../hooks/useCadastro";
+} from "../../components/Form/arvore/ValidacaoCadastroArvore";
+import { Form } from "../../components/Form";
+import { parseCookies } from "nookies";
+import { redirect, RedirectType } from "next/navigation";
 
-const Map = dynamic(() => import("../components/Map"), { ssr: false });
+const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
-export default function Cadastro() {
+export default async function CadastroArvore() {
+  useEffect(() => {
+    const { AMAZONDEX_TOKEN: token } = parseCookies();
+    if (!token) {
+      redirect("/", RedirectType.replace);
+    }
+  }, []);
   const [openModal, setOpenModal] = useState(false);
   const { cadastrarArvore, position, setPosition, serviceError } =
     useCadastroArvore();
@@ -24,7 +31,7 @@ export default function Cadastro() {
     resolver: zodResolver(cadastroFormSchema),
   });
 
-  const { register, handleSubmit, setValue } = createArvoreForm;
+  const { register, handleSubmit } = createArvoreForm;
 
   const onSubmit = async (data: CadastroFormData) => {
     await cadastrarArvore(data);
@@ -36,7 +43,10 @@ export default function Cadastro() {
         <Form.Label className="flex mx-2 h-4 items-center font-semibold text-3xl">
           Cadastro de Árvores
         </Form.Label>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col ">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col my-4 mx-2"
+        >
           <div className="flex flex-row gap-5">
             <Form.Column>
               <Form.Field>
@@ -50,7 +60,7 @@ export default function Cadastro() {
                 </Form.Label>
                 <textarea
                   rows={3}
-                  className=" border border-zinc-300 rounded-sm shadow-sm p-1 max-w-lg"
+                  className=" border border-zinc-300 rounded-sm shadow-sm p-1 max-w-full"
                   {...register("descrBotanica")}
                 />
                 <Form.ErrorMessage field="descrBotanica" />
@@ -62,11 +72,11 @@ export default function Cadastro() {
                 <button
                   type="button"
                   onClick={() => setOpenModal(!openModal)}
-                  className="bg-zinc-300 rounded-md p-2  text-sm hover:bg-green-300 max-w-lg"
+                  className="bg-zinc-300 rounded-md p-2 text-sm hover:bg-green-300 max-w-full"
                 >
                   Selecione uma localização
                 </button>
-                <Modal isOpen={openModal} mapaEscolherLocal={true}>
+                <Modal isOpen={openModal}>
                   <div className="flex items-center justify-between">
                     <h1 className="text-zinc-800 text-lg">
                       Selecione uma localização para a árvore
@@ -85,7 +95,6 @@ export default function Cadastro() {
                   <Map position={position} setPosition={setPosition} />
                   <button
                     onClick={() => {
-                      setValue("localArvore", position!);
                       setOpenModal(false);
                     }}
                     className="m-4 p-2 bg-emerald-400 rounded-md shadow-md hover:bg-emerald-500"
@@ -192,7 +201,7 @@ export default function Cadastro() {
           )}
           <button
             type="submit"
-            className="m-4 p-2 bg-emerald-400 rounded-md shadow-md hover:bg-emerald-500"
+            className="flex m-4 p-2 bg-emerald-400 rounded-md w-2/3 shadow-md hover:bg-emerald-500 justify-center self-center"
           >
             Salvar
           </button>

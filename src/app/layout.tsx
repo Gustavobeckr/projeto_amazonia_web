@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import NavBar from "./components/NavBar";
+import { AuthProvider } from "./context/AuthContext";
 
 export const metadata: Metadata = {
   title: "Projeto Amazônia",
@@ -24,7 +25,9 @@ export default function RootLayout({
       </head>
       <body className="bg-zinc-200 ">
         <NavBar />
-        <main>{children}</main>
+        <main>
+          <AuthProvider>{children}</AuthProvider>
+        </main>
       </body>
     </html>
   );

@@ -1,10 +1,14 @@
 "use client";
 import { TreeDeciduous, Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 export default function NavBar() {
+  const pathname = usePathname();
   const [isSelect, setIsSelect] = useState(false);
-
+  if (pathname == "/") {
+    return <></>;
+  }
   return (
     <nav className="bg-green-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,13 +23,13 @@ export default function NavBar() {
           <div className="hidden md:block">
             <div className="ml-4 flex items-center space-x-4">
               <a
-                href="/"
+                href="/home"
                 className="text-green-50 hover:bg-white hover:text-black p-2 rounded-lg"
               >
                 Home
               </a>
               <a
-                href="/cadastro"
+                href="/cadastro/arvore"
                 className="text-green-50 hover:bg-white hover:text-black p-2 rounded-lg"
               >
                 Cadastrar
@@ -59,13 +63,13 @@ export default function NavBar() {
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <a
-              href="/"
+              href="/home"
               className="text-green-50 block hover:bg-white hover:text-black p-2 rounded-lg"
             >
               Home
             </a>
             <a
-              href="/cadastro"
+              href="/cadastro/arvore"
               className="text-green-50 block hover:bg-white hover:text-black p-2 rounded-lg"
             >
               Cadastrar

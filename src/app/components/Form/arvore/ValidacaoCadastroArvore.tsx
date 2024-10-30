@@ -27,7 +27,7 @@ export const cadastroFormSchema = z.object({
     .custom<FileList>()
     .transform((list) => list.item(0))
     .refine(
-      (file) => mimeTypePermitido.includes(file?.type!),
+      (file) => mimeTypePermitido.includes(file!.type),
       "São permitidas apenas imagens do tipo png e jpeg!"
     ),
 });
