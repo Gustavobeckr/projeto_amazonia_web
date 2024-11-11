@@ -16,7 +16,7 @@ import { redirect, RedirectType } from "next/navigation";
 
 const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
-export default async function CadastroArvore() {
+export default function CadastroArvore() {
   useEffect(() => {
     const { AMAZONDEX_TOKEN: token } = parseCookies();
     if (!token) {

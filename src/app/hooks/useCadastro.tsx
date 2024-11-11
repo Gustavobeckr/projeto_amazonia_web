@@ -4,10 +4,10 @@ import { CadastroFormData } from "../components/Form/arvore/ValidacaoCadastroArv
 
 export const useCadastroArvore = () => {
   const [position, setPosition] = useState<LatLng | null>(null);
-  const [serviceError, setServiceError] = useState(null);
+  const [serviceError] = useState(null);
 
   async function cadastrarArvore(data: CadastroFormData): Promise<boolean> {
-    console.log(position);
+    console.log(data);
     return true;
   }
 

@@ -1,7 +1,7 @@
 "use client";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import { LoginFormData } from "../components/Form/login/ValidacaoLogin";
-import { setCookie, parseCookies } from "nookies";
+import { setCookie } from "nookies";
 import { loginRequest } from "@/service/Usuario";
 import { useRouter } from "next/navigation";
 import { axiosRequest } from "@/lib/axios";

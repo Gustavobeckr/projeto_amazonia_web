@@ -24,6 +24,7 @@ export default function Login() {
     try {
       await login(data);
     } catch (error) {
+      console.log(error);
       setError(true);
     }
     setIsLoading(false);

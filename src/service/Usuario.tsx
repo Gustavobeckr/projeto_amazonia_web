@@ -1,7 +1,6 @@
 "use server";
 import { axiosRequest } from "@/lib/axios";
 import { redirect, RedirectType } from "next/navigation";
-import { NextResponse } from "next/server";
 
 export async function loginRequest(
   login: string,
@@ -16,8 +15,8 @@ export async function loginRequest(
     });
     cookiesData.set("AMAZONDEX_TOKEN", response.data.token);
     return response.data;
-  } catch (e) {
-    throw new Error("Erro ao realizar login: ");
+  } catch (error) {
+    throw new Error("Erro ao realizar login: " + error);
   }
 }
 export async function cadastrar() {}

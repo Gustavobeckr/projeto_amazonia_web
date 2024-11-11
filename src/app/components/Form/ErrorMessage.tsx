@@ -3,7 +3,7 @@ import { useFormContext } from "react-hook-form";
 interface ErrorMessageProps {
   field: string;
 }
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 function get(obj: Record<any, any>, path: string) {
   const travel = (regexp: RegExp) =>
     String.prototype.split
