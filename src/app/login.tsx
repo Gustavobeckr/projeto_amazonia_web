@@ -57,7 +57,7 @@ export default function Login() {
             >
               Senha
             </Form.Label>
-            <Form.Input name="senha" type="text" />
+            <Form.Input name="senha" type="password" />
             <Form.ErrorMessage field="senha" />
           </Form.Field>
           {error && (
