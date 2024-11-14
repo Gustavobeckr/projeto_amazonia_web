@@ -19,6 +19,7 @@ export async function loginRequest(
     throw new Error("Erro ao realizar login: " + error);
   }
 }
+
 export async function cadastrar() {}
 
 export async function logout() {

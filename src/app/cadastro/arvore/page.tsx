@@ -1,14 +1,14 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import Modal from "../../components/Modal";
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useCadastroArvore } from "../../hooks/useCadastro";
 import {
-  CadastroFormData,
-  cadastroFormSchema,
+  ArvoreCommandFormData,
+  ArvoreCommandSchema,
 } from "../../components/Form/arvore/ValidacaoCadastroArvore";
 import { Form } from "../../components/Form";
 import { parseCookies } from "nookies";
@@ -17,23 +17,27 @@ import { redirect, RedirectType } from "next/navigation";
 const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
 export default function CadastroArvore() {
-  useEffect(() => {
-    const { AMAZONDEX_TOKEN: token } = parseCookies();
-    if (!token) {
-      redirect("/", RedirectType.replace);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const { AMAZONDEX_TOKEN: token } = parseCookies();
+  //   if (!token) {
+  //     redirect("/", RedirectType.replace);
+  //   }
+  // }, []);
   const [openModal, setOpenModal] = useState(false);
-  const { cadastrarArvore, position, setPosition, serviceError } =
+  const { cadastrarArvore, serviceError, listaLugares, setListaLugares } =
     useCadastroArvore();
 
-  const createArvoreForm = useForm<CadastroFormData>({
-    resolver: zodResolver(cadastroFormSchema),
+  const createArvoreForm = useForm<ArvoreCommandFormData>({
+    resolver: zodResolver(ArvoreCommandSchema),
   });
 
-  const { register, handleSubmit } = createArvoreForm;
+  const { register, handleSubmit, control } = createArvoreForm;
+  const { fields: fotos, append: addFoto } = useFieldArray({
+    control,
+    name: "fotoArvoreCommand",
+  });
 
-  const onSubmit = async (data: CadastroFormData) => {
+  const onSubmit = async (data: ArvoreCommandFormData) => {
     await cadastrarArvore(data);
   };
 
@@ -84,7 +88,6 @@ export default function CadastroArvore() {
                     <a
                       className="hover:text-red-500 hover:shadow-lg rounded-lg m-1"
                       onClick={() => {
-                        setPosition(null);
                         setOpenModal(false);
                       }}
                     >
@@ -92,7 +95,10 @@ export default function CadastroArvore() {
                     </a>
                   </div>
 
-                  <Map position={position} setPosition={setPosition} />
+                  <Map
+                    listaLugares={listaLugares}
+                    setListaLugares={setListaLugares}
+                  />
                   <button
                     onClick={() => {
                       setOpenModal(false);

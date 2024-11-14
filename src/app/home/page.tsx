@@ -5,12 +5,12 @@ import { parseCookies } from "nookies";
 import { useEffect } from "react";
 
 export default function Home() {
-  useEffect(() => {
-    const { AMAZONDEX_TOKEN: token } = parseCookies();
-    if (!token) {
-      redirect("/", RedirectType.replace);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const { AMAZONDEX_TOKEN: token } = parseCookies();
+  //   if (!token) {
+  //     redirect("/", RedirectType.replace);
+  //   }
+  // }, []);
   const list = [
     { id: 1, title: "Arvore 1" },
     { id: 2, title: "Arvore 2" },

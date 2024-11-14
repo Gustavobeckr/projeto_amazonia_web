@@ -1,35 +1,87 @@
-import { LatLng } from "leaflet";
 import { z } from "zod";
 
 const mimeTypePermitido = ["image/png", "image/jpeg"];
 
-export const cadastroFormSchema = z.object({
-  nomeArvore: z.string().min(3, "Nome da árvore é obrigatório!"),
-  descrBotanica: z.string().min(3, "Descrição da botânica é obrigatório!"),
-  bioReprodutiva: z.string(),
-  aspecEco: z.string(),
-  regenNatural: z.string(),
-  alimentacao: z.string(),
-  bioTec: z.string(),
-  bioAtividade: z.string(),
-  paisagismo: z.string(),
-  colheita: z.string(),
-  prodMudas: z.string(),
-  trasnplante: z.string(),
-  cuidados: z.string(),
-  localArvore: z
-    .custom<LatLng>()
-    .refine(
-      (value) => value == null,
-      "Selecione uma local de ocorrêcia natural para a árvore!"
-    ),
-  imagem: z
-    .custom<FileList>()
-    .transform((list) => list.item(0))
-    .refine(
-      (file) => mimeTypePermitido.includes(file!.type),
-      "São permitidas apenas imagens do tipo png e jpeg!"
-    ),
+const BiologiaReprodutivaEnum = z.enum(["ANGIOSPERMA", "GYMNOSPERMA"]);
+const TipoCuidadoEnum = z.enum(["PODA", "IRRIGACAO", "ADUBACAO"]);
+
+const FotoArvoreCommandSchema = z.object({
+  id: z.number().nullable(),
+  fotoId: z.number(),
+  descricao: z.string().nullable(),
 });
 
-export type CadastroFormData = z.infer<typeof cadastroFormSchema>;
+const OcorrenciaNaturalCommandSchema = z.object({
+  id: z.number().nullable(),
+  latitude: z.string().nullable(),
+  longitude: z.string().nullable(),
+});
+
+const BiotecnologiaCommandSchema = z.object({
+  id: z.number().nullable(),
+  composicao: z.string().nullable(),
+  potenciaBioprodutos: z.string().nullable(),
+});
+
+const AlimentacaoCommandSchema = z.object({
+  id: z.number().nullable(),
+  dadosNutricionais: z.string().nullable(),
+  formasConsumo: z.string().nullable(),
+});
+
+const BioatividadeCommandSchema = z.object({
+  id: z.number().nullable(),
+  descricao: z.string().nullable(),
+});
+
+const BiologiaReprodutivaCommandSchema = z.object({
+  id: z.number().nullable(),
+  tipo: BiologiaReprodutivaEnum,
+  descricao: z.string().nullable(),
+});
+
+const CuidadosEspeciaisCommandSchema = z.object({
+  id: z.number().nullable(),
+  descricao: z.string().nullable(),
+  tipoCuidado: TipoCuidadoEnum,
+});
+
+const CultivoCommandSchema = z.object({
+  id: z.number().nullable(),
+  descricao: z.string().nullable(),
+  cuidadosEspeciaisCommand: z.array(CuidadosEspeciaisCommandSchema).nullable(),
+});
+
+const PaisagismoFotoCommandSchema = z.object({
+  id: z.number().nullable(),
+  fotoId: z.number(),
+});
+
+const PaisagismoCommandSchema = z.object({
+  id: z.number().nullable(),
+  descricao: z.string().nullable(),
+  paisagismoFotoCommand: PaisagismoFotoCommandSchema.nullable(),
+});
+
+const AproveitamentoCommandSchema = z.object({
+  id: z.number().nullable(),
+  descricao: z.string().nullable(),
+  biotecnologiaCommand: BiotecnologiaCommandSchema.nullable(),
+  alimentacaoCommand: AlimentacaoCommandSchema.nullable(),
+  bioatividadeCommand: BioatividadeCommandSchema.nullable(),
+});
+
+export const ArvoreCommandSchema = z.object({
+  id: z.number().nullable(),
+  nome: z.string().nullable(),
+  descricaoBotanica: z.string().nullable(),
+  aspectosEcologicos: z.string().nullable(),
+  regeneracaoNatural: z.string().nullable(),
+  biologiaReprodutivaCommand: BiologiaReprodutivaCommandSchema.nullable(),
+  ocorrenciaNaturalCommand: z.array(OcorrenciaNaturalCommandSchema).nullable(),
+  fotoArvoreCommand: z.array(FotoArvoreCommandSchema).nullable(),
+  cultivoCommand: CultivoCommandSchema.nullable(),
+  paisagismoCommand: PaisagismoCommandSchema.nullable(),
+});
+
+export type ArvoreCommandFormData = z.infer<typeof ArvoreCommandSchema>;
