@@ -43,12 +43,3 @@ export default function Home() {
     </>
   );
 }
-
-// export const getServerSideProps: GetServerSideProps = async (ctx) => {
-//   "use server";
-//   console.log(ctx.req.cookies);
-
-//   return {
-//     props: ctx,
-//   };
-// };

@@ -3,6 +3,8 @@ import { ErrorMessage } from "./ErrorMessage";
 import { Field } from "./Field";
 import { Input } from "./Input";
 import { Label } from "./Label";
+import { SelectInput } from "./SelectInput";
+import { TextArea } from "./TextArea";
 
 export const Form = {
   Label,
@@ -10,4 +12,6 @@ export const Form = {
   ErrorMessage,
   Field,
   Column,
+  SelectInput,
+  TextArea,
 };

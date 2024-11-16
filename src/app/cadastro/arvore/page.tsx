@@ -13,6 +13,8 @@ import {
 import { Form } from "../../components/Form";
 import { parseCookies } from "nookies";
 import { redirect, RedirectType } from "next/navigation";
+import { useRouter } from "next/router";
+import RichTextEditor from "@/app/components/Form/RichTextEditor/RichTextEditor";
 
 const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
@@ -31,15 +33,23 @@ export default function CadastroArvore() {
     resolver: zodResolver(ArvoreCommandSchema),
   });
 
-  const { register, handleSubmit, control } = createArvoreForm;
-  const { fields: fotos, append: addFoto } = useFieldArray({
+  const { register, handleSubmit, control, setValue } = createArvoreForm;
+
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "fotoArvoreCommand",
   });
-
   const onSubmit = async (data: ArvoreCommandFormData) => {
-    await cadastrarArvore(data);
+    console.log(data);
+    // const response = await cadastrarArvore(data);
+    // if (response) {
+    //   redirect("/home");
+    // }
   };
+
+  function addNovaFoto() {
+    append({ descricao: "", fotoId: null });
+  }
 
   return (
     <div className="bg-zinc-100 m-2 p-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 rounded-lg  shadow-lg">
@@ -54,20 +64,32 @@ export default function CadastroArvore() {
           <div className="flex flex-row gap-5">
             <Form.Column>
               <Form.Field>
-                <Form.Label htmlFor="nomeArvore">Nome da árvore</Form.Label>
-                <Form.Input type="text" name="nomeArvore" />
-                <Form.ErrorMessage field="nomeArvore" />
+                <Form.Label htmlFor="nome">Nome da árvore</Form.Label>
+                <Form.Input type="text" name="nome" />
+                <Form.ErrorMessage field="nome" />
               </Form.Field>
-              <Form.Field>
-                <Form.Label htmlFor="descrBotanica">
+              {/* <Form.Field>
+                <Form.Label htmlFor="descricaoBotanica">
                   Descrição botânica
                 </Form.Label>
                 <textarea
                   rows={3}
                   className=" border border-zinc-300 rounded-sm shadow-sm p-1 max-w-full"
-                  {...register("descrBotanica")}
+                  {...register("descricaoBotanica")}
                 />
-                <Form.ErrorMessage field="descrBotanica" />
+                <Form.ErrorMessage field="descricaoBotanica" />
+              </Form.Field> */}
+              <Form.Field>
+                <Form.Label htmlFor="descricaoBotanica">
+                  Descrição botânica
+                </Form.Label>
+                <RichTextEditor
+                  textContent={"Text"}
+                  onChange={function (richText: string): void {
+                    setValue("descricaoBotanica", richText);
+                  }}
+                />
+                <Form.ErrorMessage field="descricaoBotanica" />
               </Form.Field>
               <Form.Field>
                 <Form.Label htmlFor="localArvore">
@@ -112,43 +134,82 @@ export default function CadastroArvore() {
                 <Form.ErrorMessage field="localArvore" />
               </Form.Field>
               <Form.Field>
-                <Form.Label htmlFor="bioReprodutiva">
-                  Biologia Reprodutiva
+                <Form.Label htmlFor="biologiaReprodutivaTipo">
+                  Tipo Biologia Reprodutiva
                 </Form.Label>
-                <Form.Input type="text" name="bioReprodutiva" />
-                <Form.ErrorMessage field="bioReprodutiva" />
+                <Form.SelectInput
+                  name="biologiaReprodutivaTipo"
+                  enum={["ANGIOSPERMA", "GYMNOSPERMA"]}
+                />
+                <Form.ErrorMessage field="biologiaReprodutivaTipo" />
               </Form.Field>
               <Form.Field>
-                <Form.Label htmlFor="aspecEco">Aspectos ecológicos</Form.Label>
-                <Form.Input type="text" name="aspecEco" />
-                <Form.ErrorMessage field="aspecEco" />
+                <Form.Label htmlFor="biologiaReprodutivaDescr">
+                  Descrição Biologia Reprodutiva
+                </Form.Label>
+                <Form.TextArea name="biologiaReprodutivaDescr" />
+                <Form.ErrorMessage field="biologiaReprodutivaDescr" />
               </Form.Field>
               <Form.Field>
-                <Form.Label htmlFor="regenNatural">
+                <Form.Label htmlFor="aspectosEcologicos">
+                  Aspectos ecológicos
+                </Form.Label>
+                <Form.TextArea name="aspectosEcologicos" />
+                <Form.ErrorMessage field="aspectosEcologicos" />
+              </Form.Field>
+              <Form.Field>
+                <Form.Label htmlFor="regeneracaoNatural">
                   Regeneração natural
                 </Form.Label>
-                <Form.Input type="text" name="regenNatural" />
-                <Form.ErrorMessage field="regenNatural" />
+                <Form.TextArea name="regeneracaoNatural" />
+                <Form.ErrorMessage field="regeneracaoNatural" />
               </Form.Field>
               <Form.Field>
-                <Form.Label htmlFor="paisagismo">Paisagismo</Form.Label>
-                <Form.Input type="text" name="paisagismo" />
-                <Form.ErrorMessage field="paisagismo" />
+                <Form.Label htmlFor="paisagismoDescr">
+                  Descrição Paisagismo
+                </Form.Label>
+                <Form.TextArea name="paisagismoDescr" />
+                <Form.ErrorMessage field="paisagismoDescr" />
               </Form.Field>
               <Form.Field>
-                <Form.Label htmlFor="imagem">Foto da Árvore</Form.Label>
-                <Form.Input
-                  className="block max-w-lg text-sm text-slate-500
-                        file:mr-4 file:py-2 file:px-4
-                        file:rounded-md file:border-0
-                        file:text-sm 
-                        file:bg-zinc-300 
-                        hover:file:bg-green-300"
-                  type="file"
-                  name="imagem"
-                  accept="image/*"
-                />
-                <Form.ErrorMessage field="imagem" />
+                <Form.Label
+                  htmlFor="fotoArvoreCommand"
+                  className="flex flex-row justify-between items-center"
+                >
+                  Fotos da Árvore
+                  <button
+                    className="bg-zinc-300 hover:bg-green-300 p-2 rounded-md"
+                    onClick={addNovaFoto}
+                  >
+                    Adicionar
+                  </button>
+                </Form.Label>
+                {fields.map((field, index) => {
+                  return (
+                    <Form.Field key={field.id}>
+                      <Form.Label htmlFor="fotoArvoreCommand.descricao">
+                        Descrição da foto
+                      </Form.Label>
+                      <Form.Input
+                        type="text"
+                        name={`fotoArvoreCommand.${index}.descricao`}
+                        accept="image/*"
+                      />
+                      <Form.Input
+                        className="rounded-lg shadow-sm p-1 block max-w-lg text-sm text-slate-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-md file:border-0
+                          file:text-sm 
+                          file:bg-zinc-300 
+                          hover:file:bg-green-300"
+                        type="file"
+                        name={`fotoArvoreCommand.${index}.fotoId`}
+                        accept="image/*"
+                      />
+                    </Form.Field>
+                  );
+                })}
+                <Form.ErrorMessage field="fotoArvoreCommand" />
               </Form.Field>
             </Form.Column>
             <Form.Column>
@@ -156,47 +217,70 @@ export default function CadastroArvore() {
                 Aproveitamento
               </Form.Label>
               <Form.Field>
-                <Form.Label htmlFor="alimentacao">Alimentação</Form.Label>
-                <Form.Input type="text" name="alimentacao" />
-                <Form.ErrorMessage field="alimentacao" />
-              </Form.Field>
-              <Form.Field>
-                <Form.Label htmlFor="bioTec">
-                  Biotecnológico energético
+                <Form.Label htmlFor="aproveitamentoDescr">
+                  Alimentação
                 </Form.Label>
-                <Form.Input type="text" name="bioTec" />
-                <Form.ErrorMessage field="bioTec" />
+                <Form.TextArea name="aproveitamentoDescr" />
+                <Form.ErrorMessage field="aproveitamentoDescr" />
               </Form.Field>
               <Form.Field>
-                <Form.Label htmlFor="bioAtividade">Bioatividade</Form.Label>
-                <Form.Input type="text" name="bioAtividade" />
-                <Form.ErrorMessage field="bioAtividade" />
+                <Form.Label htmlFor="aproveitamentoBioTecComposicao">
+                  Composição Biotecnológica
+                </Form.Label>
+                <Form.TextArea name="aproveitamentoBioTecComposicao" />
+                <Form.ErrorMessage field="aproveitamentoBioTecComposicao" />
               </Form.Field>
-
+              <Form.Field>
+                <Form.Label htmlFor="aproveitamentoBioTecBioProdutos">
+                  Potência Bioprodutos Biotecnológicos
+                </Form.Label>
+                <Form.TextArea name="aproveitamentoBioTecBioProdutos" />
+                <Form.ErrorMessage field="aproveitamentoBioTecBioProdutos" />
+              </Form.Field>
+              <Form.Field>
+                <Form.Label htmlFor="aproveitamentoBioAtividadeDescr">
+                  Bioatividade
+                </Form.Label>
+                <Form.TextArea name="aproveitamentoBioAtividadeDescr" />
+                <Form.ErrorMessage field="aproveitamentoBioAtividadeDescr" />
+              </Form.Field>
               <Form.Label className="text-md font-semibold my-4">
                 Cultivo em viveiros
               </Form.Label>
               <Form.Field>
-                <Form.Label htmlFor="colheita">
-                  Colheita e beneficiamento de sementes
+                <Form.Label htmlFor="cultivoDescr">
+                  Descrição Cultivo
                 </Form.Label>
-                <Form.Input type="text" name="colheita" />
-                <Form.ErrorMessage field="colheita" />
+                <Form.TextArea name="cultivoDescr" />
+                <Form.ErrorMessage field="cultivoDescr" />
               </Form.Field>
               <Form.Field>
-                <Form.Label htmlFor="prodMudas">Produção de mudas</Form.Label>
-                <Form.Input type="text" name="prodMudas" />
-                <Form.ErrorMessage field="prodMudas" />
+                <Form.Label htmlFor="cultivoCuidadosAgua">
+                  Cuidados Especiais com a água
+                </Form.Label>
+                <Form.TextArea name="cultivoCuidadosAgua" />
+                <Form.ErrorMessage field="cultivoCuidadosAgua" />
               </Form.Field>
               <Form.Field>
-                <Form.Label htmlFor="trasnplante">Transplante</Form.Label>
-                <Form.Input type="text" name="trasnplante" />
-                <Form.ErrorMessage field="trasnplante" />
+                <Form.Label htmlFor="cultivoCuidadosSolo">
+                  Cuidados Especiais com o solo
+                </Form.Label>
+                <Form.TextArea name="cultivoCuidadosSolo" />
+                <Form.ErrorMessage field="cultivoCuidadosSolo" />
               </Form.Field>
               <Form.Field>
-                <Form.Label htmlFor="cuidados">Cuidados especiais</Form.Label>
-                <Form.Input type="text" name="cuidados" />
-                <Form.ErrorMessage field="cuidados" />
+                <Form.Label htmlFor="aproveitamentoAlimentacaoDadosNutricionas">
+                  Dados Nutricionais
+                </Form.Label>
+                <Form.TextArea name="aproveitamentoAlimentacaoDadosNutricionas" />
+                <Form.ErrorMessage field="aproveitamentoAlimentacaoDadosNutricionas" />
+              </Form.Field>
+              <Form.Field>
+                <Form.Label htmlFor="aproveitamentoAlimentacaoFormaConsumo">
+                  Formas de consumo
+                </Form.Label>
+                <Form.TextArea name="aproveitamentoAlimentacaoFormaConsumo" />
+                <Form.ErrorMessage field="aproveitamentoAlimentacaoFormaConsumo" />
               </Form.Field>
             </Form.Column>
           </div>
@@ -205,6 +289,7 @@ export default function CadastroArvore() {
               Erro ao tentar cadastrar árvore!
             </span>
           )}
+
           <button
             type="submit"
             className="flex m-4 p-2 bg-emerald-400 rounded-md w-2/3 shadow-md hover:bg-emerald-500 justify-center self-center"
