@@ -23,12 +23,12 @@ const RichTextEditor = dynamic(
 const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
 export default function CadastroArvore() {
-  // useEffect(() => {
-  //   const { AMAZONDEX_TOKEN: token } = parseCookies();
-  //   if (!token) {
-  //     redirect("/", RedirectType.replace);
-  //   }
-  // }, []);
+  useEffect(() => {
+    const { AMAZONDEX_TOKEN: token } = parseCookies();
+    if (!token) {
+      redirect("/", RedirectType.replace);
+    }
+  }, []);
   const [openModal, setOpenModal] = useState(false);
   const [isLoadind, setIsLoading] = useState(false);
   const {
