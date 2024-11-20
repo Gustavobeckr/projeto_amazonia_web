@@ -12,8 +12,11 @@ export default function RichTextEditor({
   onChange: (richText: string) => void;
 }) {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
-      StarterKit.configure(),
+      StarterKit.configure({
+        heading: false,
+      }),
       Heading.configure({
         HTMLAttributes: {
           class: "text-lg font-bold",
@@ -24,16 +27,17 @@ export default function RichTextEditor({
     content: textContent,
     editorProps: {
       attributes: {
-        class: "rounded-md border min-h-[250px] p-1 bg-back",
+        class: "rounded-md border border-zinc-300 min-h-[100px] p-1 bg-back",
       },
     },
+
     onUpdate({ editor }) {
       onChange(editor.getHTML());
     },
   });
 
   return (
-    <div className="flex flex-col justify-stretch min-h-[250px]">
+    <div className="flex flex-col justify-stretch min-h-[100px] bg-white  border-zinc-300  rounded-lg shadow-sm ">
       <ToolBarRichTextEditor editor={editor} />
       <EditorContent editor={editor} />
     </div>

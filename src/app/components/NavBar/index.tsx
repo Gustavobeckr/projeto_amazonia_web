@@ -6,9 +6,9 @@ import { useState } from "react";
 export default function NavBar() {
   const pathname = usePathname();
   const [isSelect, setIsSelect] = useState(false);
-  // if (pathname == "/") {
-  //   return <></>;
-  // }
+  if (pathname == "/") {
+    return <></>;
+  }
   return (
     <nav className="bg-green-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

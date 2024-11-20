@@ -1,12 +1,12 @@
 export type ArvoreCommand = {
-  id: number;
+  id?: number;
   nome: string;
   descricaoBotanica: string;
   aspectosEcologicos: string;
   regeneracaoNatural: string;
   biologiaReprodutivaCommand: BiologiaReprodutivaCommand;
   ocorrenciaNaturalCommand: OcorrenciaNaturalCommand[];
-  fotoArvoreCommand: FotoArvoreCommand[];
+  fotoArvoreCommand: FotoArvoreCommand[] | null;
   cultivoCommand: CultivoCommand;
   paisagismoCommand: PaisagismoCommand;
 };
@@ -18,7 +18,7 @@ export type AproveitamentoCommand = ComboCommand & {
 };
 
 export type AlimentacaoCommand = {
-  id: number;
+  id?: number;
   dadosNutricionais: string;
   formasConsumo: string;
 };
@@ -26,19 +26,19 @@ export type AlimentacaoCommand = {
 export type BioatividadeCommand = ComboCommand;
 
 export type BiologiaReprodutivaCommand = {
-  id: number;
+  id?: number;
   tipo: BiologiaReprodutivaEnum;
   descricao: string;
 };
 
 export type BiotecnologiaCommand = {
-  id: number;
+  id?: number;
   composicao: string;
   potenciaBioprodutos: string;
 };
 
 export type ComboCommand = {
-  id: number;
+  id?: number;
   descricao: string;
 };
 
@@ -51,24 +51,22 @@ export type CultivoCommand = ComboCommand & {
 };
 
 export type FotoArvoreCommand = {
-  id: number;
-  fotoId: number;
+  id?: number;
+  fotoId: number | null;
   descricao: string;
 };
 
 export type OcorrenciaNaturalCommand = {
-  id: number;
+  id?: number;
   latitude: string;
   longitude: string;
 };
 
-export type PaisagismoCommand = ComboCommand & {
-  paisagismoFotoCommand: PaisagismoFotoCommand;
-};
+export type PaisagismoCommand = ComboCommand;
 
 export type PaisagismoFotoCommand = {
-  id: number;
-  fotoId: number;
+  id?: number;
+  fotoId?: number;
 };
 
 export enum BiologiaReprodutivaEnum {
@@ -77,6 +75,6 @@ export enum BiologiaReprodutivaEnum {
 }
 
 export enum TipoCuidadoEnum {
-  AGUA = "Água",
-  SOLO = "Solo",
+  AGUA = "AGUA",
+  SOLO = "SOLO",
 }

@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import Modal from "../../components/Modal";
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { Trash, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useCadastroArvore } from "../../hooks/useCadastro";
 import {
@@ -14,8 +14,12 @@ import { Form } from "../../components/Form";
 import { parseCookies } from "nookies";
 import { redirect, RedirectType } from "next/navigation";
 import { useRouter } from "next/router";
-import RichTextEditor from "@/app/components/Form/RichTextEditor/RichTextEditor";
+import { CircularProgress } from "@mui/material";
 
+const RichTextEditor = dynamic(
+  () => import("@/app/components/Form/RichTextEditor/RichTextEditor"),
+  { ssr: false }
+);
 const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
 export default function CadastroArvore() {
@@ -26,22 +30,37 @@ export default function CadastroArvore() {
   //   }
   // }, []);
   const [openModal, setOpenModal] = useState(false);
-  const { cadastrarArvore, serviceError, listaLugares, setListaLugares } =
-    useCadastroArvore();
+  const [isLoadind, setIsLoading] = useState(false);
+  const {
+    cadastrarArvore,
+    serviceError,
+    listaLugares,
+    setListaLugares,
+    uploadFotoArvore,
+  } = useCadastroArvore();
 
   const createArvoreForm = useForm<ArvoreCommandFormData>({
     resolver: zodResolver(ArvoreCommandSchema),
   });
 
-  const { register, handleSubmit, control, setValue } = createArvoreForm;
+  const { handleSubmit, control, setValue } = createArvoreForm;
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "fotoArvoreCommand",
   });
+
+  const uploadFoto = async (index: number, foto: Blob) => {
+    const fotoID = await uploadFotoArvore(foto);
+    if (fotoID) {
+      setValue(`fotoArvoreCommand.${index}.fotoId`, fotoID);
+    }
+  };
+
   const onSubmit = async (data: ArvoreCommandFormData) => {
-    console.log(data);
-    // const response = await cadastrarArvore(data);
+    setIsLoading(true);
+    const response = await cadastrarArvore(data);
+    setIsLoading(false);
     // if (response) {
     //   redirect("/home");
     // }
@@ -68,23 +87,12 @@ export default function CadastroArvore() {
                 <Form.Input type="text" name="nome" />
                 <Form.ErrorMessage field="nome" />
               </Form.Field>
-              {/* <Form.Field>
-                <Form.Label htmlFor="descricaoBotanica">
-                  Descrição botânica
-                </Form.Label>
-                <textarea
-                  rows={3}
-                  className=" border border-zinc-300 rounded-sm shadow-sm p-1 max-w-full"
-                  {...register("descricaoBotanica")}
-                />
-                <Form.ErrorMessage field="descricaoBotanica" />
-              </Form.Field> */}
               <Form.Field>
                 <Form.Label htmlFor="descricaoBotanica">
                   Descrição botânica
                 </Form.Label>
                 <RichTextEditor
-                  textContent={"Text"}
+                  textContent={""}
                   onChange={function (richText: string): void {
                     setValue("descricaoBotanica", richText);
                   }}
@@ -111,6 +119,7 @@ export default function CadastroArvore() {
                       className="hover:text-red-500 hover:shadow-lg rounded-lg m-1"
                       onClick={() => {
                         setOpenModal(false);
+                        setListaLugares([]);
                       }}
                     >
                       <X />
@@ -124,6 +133,7 @@ export default function CadastroArvore() {
                   <button
                     onClick={() => {
                       setOpenModal(false);
+                      setValue("ocorrenciaNaturalCommand", listaLugares);
                     }}
                     className="m-4 p-2 bg-emerald-400 rounded-md shadow-md hover:bg-emerald-500"
                     type="button"
@@ -131,7 +141,7 @@ export default function CadastroArvore() {
                     Selecionar
                   </button>
                 </Modal>
-                <Form.ErrorMessage field="localArvore" />
+                <Form.ErrorMessage field="ocorrenciaNaturalCommand" />
               </Form.Field>
               <Form.Field>
                 <Form.Label htmlFor="biologiaReprodutivaTipo">
@@ -139,7 +149,7 @@ export default function CadastroArvore() {
                 </Form.Label>
                 <Form.SelectInput
                   name="biologiaReprodutivaTipo"
-                  enum={["ANGIOSPERMA", "GYMNOSPERMA"]}
+                  enum={["Frutificação", "Dispersão"]}
                 />
                 <Form.ErrorMessage field="biologiaReprodutivaTipo" />
               </Form.Field>
@@ -147,28 +157,52 @@ export default function CadastroArvore() {
                 <Form.Label htmlFor="biologiaReprodutivaDescr">
                   Descrição Biologia Reprodutiva
                 </Form.Label>
-                <Form.TextArea name="biologiaReprodutivaDescr" />
+                <RichTextEditor
+                  textContent={""}
+                  onChange={function (richText: string): void {
+                    setValue("biologiaReprodutivaDescr", richText);
+                  }}
+                />
+
                 <Form.ErrorMessage field="biologiaReprodutivaDescr" />
               </Form.Field>
               <Form.Field>
                 <Form.Label htmlFor="aspectosEcologicos">
                   Aspectos ecológicos
                 </Form.Label>
-                <Form.TextArea name="aspectosEcologicos" />
+                <RichTextEditor
+                  textContent={""}
+                  onChange={function (richText: string): void {
+                    setValue("aspectosEcologicos", richText);
+                  }}
+                />
+
                 <Form.ErrorMessage field="aspectosEcologicos" />
               </Form.Field>
               <Form.Field>
                 <Form.Label htmlFor="regeneracaoNatural">
                   Regeneração natural
                 </Form.Label>
-                <Form.TextArea name="regeneracaoNatural" />
+                <RichTextEditor
+                  textContent={""}
+                  onChange={function (richText: string): void {
+                    setValue("regeneracaoNatural", richText);
+                  }}
+                />
+
                 <Form.ErrorMessage field="regeneracaoNatural" />
               </Form.Field>
               <Form.Field>
                 <Form.Label htmlFor="paisagismoDescr">
                   Descrição Paisagismo
                 </Form.Label>
-                <Form.TextArea name="paisagismoDescr" />
+                <RichTextEditor
+                  textContent={""}
+                  onChange={function (richText: string): void {
+                    setValue("paisagismoDescr", richText);
+                  }}
+                />
+
                 <Form.ErrorMessage field="paisagismoDescr" />
               </Form.Field>
               <Form.Field>
@@ -178,10 +212,11 @@ export default function CadastroArvore() {
                 >
                   Fotos da Árvore
                   <button
+                    type="button"
                     className="bg-zinc-300 hover:bg-green-300 p-2 rounded-md"
                     onClick={addNovaFoto}
                   >
-                    Adicionar
+                    Adicionar foto
                   </button>
                 </Form.Label>
                 {fields.map((field, index) => {
@@ -195,17 +230,27 @@ export default function CadastroArvore() {
                         name={`fotoArvoreCommand.${index}.descricao`}
                         accept="image/*"
                       />
-                      <Form.Input
-                        className="rounded-lg shadow-sm p-1 block max-w-lg text-sm text-slate-500
+                      <div className="flex flex-row items-center">
+                        <input
+                          onChange={(e) =>
+                            uploadFoto(index, e.target.files![0])
+                          }
+                          className="rounded-lg shadow-sm p-1 block w-full text-xs text-slate-500
                           file:mr-4 file:py-2 file:px-4
                           file:rounded-md file:border-0
-                          file:text-sm 
+                          file:text-sm
                           file:bg-zinc-300 
                           hover:file:bg-green-300"
-                        type="file"
-                        name={`fotoArvoreCommand.${index}.fotoId`}
-                        accept="image/*"
-                      />
+                          type="file"
+                          accept="image/*"
+                        />
+                        <a
+                          onClick={() => remove(index)}
+                          className="text-red-400 hover:text-red-600"
+                        >
+                          <Trash />
+                        </a>
+                      </div>
                     </Form.Field>
                   );
                 })}
@@ -220,28 +265,52 @@ export default function CadastroArvore() {
                 <Form.Label htmlFor="aproveitamentoDescr">
                   Alimentação
                 </Form.Label>
-                <Form.TextArea name="aproveitamentoDescr" />
+                <RichTextEditor
+                  textContent={""}
+                  onChange={function (richText: string): void {
+                    setValue("aproveitamentoDescr", richText);
+                  }}
+                />
+
                 <Form.ErrorMessage field="aproveitamentoDescr" />
               </Form.Field>
               <Form.Field>
                 <Form.Label htmlFor="aproveitamentoBioTecComposicao">
                   Composição Biotecnológica
                 </Form.Label>
-                <Form.TextArea name="aproveitamentoBioTecComposicao" />
+                <RichTextEditor
+                  textContent={""}
+                  onChange={function (richText: string): void {
+                    setValue("aproveitamentoBioTecComposicao", richText);
+                  }}
+                />
+
                 <Form.ErrorMessage field="aproveitamentoBioTecComposicao" />
               </Form.Field>
               <Form.Field>
                 <Form.Label htmlFor="aproveitamentoBioTecBioProdutos">
                   Potência Bioprodutos Biotecnológicos
                 </Form.Label>
-                <Form.TextArea name="aproveitamentoBioTecBioProdutos" />
+                <RichTextEditor
+                  textContent={""}
+                  onChange={function (richText: string): void {
+                    setValue("aproveitamentoBioTecBioProdutos", richText);
+                  }}
+                />
+
                 <Form.ErrorMessage field="aproveitamentoBioTecBioProdutos" />
               </Form.Field>
               <Form.Field>
                 <Form.Label htmlFor="aproveitamentoBioAtividadeDescr">
                   Bioatividade
                 </Form.Label>
-                <Form.TextArea name="aproveitamentoBioAtividadeDescr" />
+                <RichTextEditor
+                  textContent={""}
+                  onChange={function (richText: string): void {
+                    setValue("aproveitamentoBioAtividadeDescr", richText);
+                  }}
+                />
+
                 <Form.ErrorMessage field="aproveitamentoBioAtividadeDescr" />
               </Form.Field>
               <Form.Label className="text-md font-semibold my-4">
@@ -251,50 +320,87 @@ export default function CadastroArvore() {
                 <Form.Label htmlFor="cultivoDescr">
                   Descrição Cultivo
                 </Form.Label>
-                <Form.TextArea name="cultivoDescr" />
+                <RichTextEditor
+                  textContent={""}
+                  onChange={function (richText: string): void {
+                    setValue("cultivoDescr", richText);
+                  }}
+                />
+
                 <Form.ErrorMessage field="cultivoDescr" />
               </Form.Field>
               <Form.Field>
                 <Form.Label htmlFor="cultivoCuidadosAgua">
                   Cuidados Especiais com a água
                 </Form.Label>
-                <Form.TextArea name="cultivoCuidadosAgua" />
+                <RichTextEditor
+                  textContent={""}
+                  onChange={function (richText: string): void {
+                    setValue("cultivoCuidadosAgua", richText);
+                  }}
+                />
+
                 <Form.ErrorMessage field="cultivoCuidadosAgua" />
               </Form.Field>
               <Form.Field>
                 <Form.Label htmlFor="cultivoCuidadosSolo">
                   Cuidados Especiais com o solo
                 </Form.Label>
-                <Form.TextArea name="cultivoCuidadosSolo" />
+                <RichTextEditor
+                  textContent={""}
+                  onChange={function (richText: string): void {
+                    setValue("cultivoCuidadosSolo", richText);
+                  }}
+                />
+
                 <Form.ErrorMessage field="cultivoCuidadosSolo" />
               </Form.Field>
               <Form.Field>
                 <Form.Label htmlFor="aproveitamentoAlimentacaoDadosNutricionas">
                   Dados Nutricionais
                 </Form.Label>
-                <Form.TextArea name="aproveitamentoAlimentacaoDadosNutricionas" />
+                <RichTextEditor
+                  textContent={""}
+                  onChange={function (richText: string): void {
+                    setValue(
+                      "aproveitamentoAlimentacaoDadosNutricionas",
+                      richText
+                    );
+                  }}
+                />
+
                 <Form.ErrorMessage field="aproveitamentoAlimentacaoDadosNutricionas" />
               </Form.Field>
               <Form.Field>
                 <Form.Label htmlFor="aproveitamentoAlimentacaoFormaConsumo">
                   Formas de consumo
                 </Form.Label>
-                <Form.TextArea name="aproveitamentoAlimentacaoFormaConsumo" />
+                <RichTextEditor
+                  textContent={""}
+                  onChange={function (richText: string): void {
+                    setValue("aproveitamentoAlimentacaoFormaConsumo", richText);
+                  }}
+                />
+
                 <Form.ErrorMessage field="aproveitamentoAlimentacaoFormaConsumo" />
               </Form.Field>
             </Form.Column>
           </div>
           {serviceError && (
-            <span className="text-sm text-red-500 mt-1">
+            <span className="text-4x1 text-red-500 m-2 text-center">
               Erro ao tentar cadastrar árvore!
             </span>
           )}
 
           <button
             type="submit"
-            className="flex m-4 p-2 bg-emerald-400 rounded-md w-2/3 shadow-md hover:bg-emerald-500 justify-center self-center"
+            className="flex m-2 p-2 bg-emerald-400 rounded-md w-2/3 shadow-md hover:bg-emerald-500 justify-center self-center"
           >
-            Salvar
+            {isLoadind ? (
+              <CircularProgress color="inherit" size={25} />
+            ) : (
+              "Salvar"
+            )}
           </button>
         </form>
       </FormProvider>

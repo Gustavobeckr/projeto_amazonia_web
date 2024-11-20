@@ -6,9 +6,9 @@ import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 type MapProps = {
-  listaLugares: { lat: string; lng: string }[] | [];
+  listaLugares: { latitude: string; longitude: string }[] | [];
   setListaLugares: Dispatch<
-    SetStateAction<{ lat: string; lng: string }[] | []>
+    SetStateAction<{ latitude: string; longitude: string }[] | []>
   >;
   // router: NextRouter;
 };
@@ -39,9 +39,12 @@ export default function Map({ listaLugares, setListaLugares }: MapProps) {
         setListaLugares={setListaLugares}
       />
       {listaLugares &&
-        listaLugares?.map(({ lat, lng }, key) => {
+        listaLugares?.map(({ latitude, longitude }, key) => {
           return (
-            <Marker key={key} position={[parseFloat(lat), parseFloat(lng)]} />
+            <Marker
+              key={key}
+              position={[parseFloat(latitude), parseFloat(longitude)]}
+            />
           );
         })}
     </MapContainer>
@@ -52,16 +55,18 @@ function MarkerPointMap({
   listaLugares,
   setListaLugares,
 }: {
-  listaLugares: { lat: string; lng: string }[];
-  setListaLugares: Dispatch<SetStateAction<{ lat: string; lng: string }[]>>;
+  listaLugares: { latitude: string; longitude: string }[];
+  setListaLugares: Dispatch<
+    SetStateAction<{ latitude: string; longitude: string }[]>
+  >;
 }) {
   const router = useRouter();
   useMapEvents({
     load: () => {},
     click: (e) => {
       listaLugares.push({
-        lat: e.latlng.lat.toString(),
-        lng: e.latlng.lng.toString(),
+        latitude: e.latlng.lat.toString(),
+        longitude: e.latlng.lng.toString(),
       });
       setListaLugares(listaLugares);
       router.refresh();

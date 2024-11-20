@@ -7,15 +7,13 @@ export async function loginRequest(
   senha: string
 ): Promise<dataRespostaLoginDTO> {
   try {
-    const { cookies } = await import("next/headers");
-    const cookiesData = cookies();
-    const response: RespostaLoginDTO = await axiosRequest.post("auth", {
+    const response = await axiosRequest.post("auth", {
       login,
       senha,
     });
-    cookiesData.set("AMAZONDEX_TOKEN", response.data.token);
-    return response.data;
+    return response.data.data;
   } catch (error) {
+    console.log(error);
     throw new Error("Erro ao realizar login: " + error);
   }
 }
