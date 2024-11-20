@@ -25,13 +25,20 @@ export function AuthProvider({
   const isAuthenticated = !!user;
 
   async function login({ login, senha }: LoginFormData) {
-    const response = await loginRequest(login, senha);
-    setCookie(undefined, "AMAZONDEX_TOKEN", response.token, {
-      maxAge: 60 * 60 * 24,
-    });
-    axiosRequest.defaults.headers["Authorization"] = `Bearer ${response.token}`;
-    setUser({ login: response.login });
-    router.replace("/home");
+    try {
+      const response = await loginRequest(login, senha);
+
+      setCookie(undefined, "AMAZONDEX_TOKEN", response.token, {
+        maxAge: 60 * 60 * 24,
+      });
+      axiosRequest.defaults.headers[
+        "Authorization"
+      ] = `Bearer ${response.token}`;
+      setUser({ login: response.login });
+      router.replace("/home");
+    } catch (error) {
+      throw new Error("Erro ao fazer login: " + error);
+    }
   }
 
   return (

@@ -1,21 +1,16 @@
 import { LatLng } from "leaflet";
-import { Dispatch, SetStateAction } from "react";
+import { NextRouter, Router } from "next/router";
+import { useRouter } from "next/navigation";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
-
-type Places = {
-  id: string;
-  name: string;
-  slug: string;
-  location: {
-    latitude: number;
-    longitude: number;
-  };
-};
+import { useFieldArray, useFormContext } from "react-hook-form";
 
 type MapProps = {
-  places?: Places[];
-  position: LatLng | null;
-  setPosition: Dispatch<SetStateAction<LatLng | null>>;
+  listaLugares: { latitude: string; longitude: string }[] | [];
+  setListaLugares: Dispatch<
+    SetStateAction<{ latitude: string; longitude: string }[] | []>
+  >;
+  // router: NextRouter;
 };
 
 // var greenIcon = L.icon({
@@ -28,7 +23,7 @@ type MapProps = {
 //   popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
 // });
 
-export default function Map({ places, position, setPosition }: MapProps) {
+export default function Map({ listaLugares, setListaLugares }: MapProps) {
   return (
     <MapContainer
       center={[-3.4001527, -62.3965349]}
@@ -39,26 +34,42 @@ export default function Map({ places, position, setPosition }: MapProps) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <MarkerPointMap setPosition={setPosition} />
-      {position && <Marker position={[position.lat, position.lng]} />}
-      {places?.map(({ id, name, location }) => {
-        const { latitude, longitude } = location;
-        return (
-          <Marker key={id} position={[latitude, longitude]} title={name} />
-        );
-      })}
+      <MarkerPointMap
+        listaLugares={listaLugares!}
+        setListaLugares={setListaLugares}
+      />
+      {listaLugares &&
+        listaLugares?.map(({ latitude, longitude }, key) => {
+          return (
+            <Marker
+              key={key}
+              position={[parseFloat(latitude), parseFloat(longitude)]}
+            />
+          );
+        })}
     </MapContainer>
   );
 }
 
 function MarkerPointMap({
-  setPosition,
+  listaLugares,
+  setListaLugares,
 }: {
-  setPosition: Dispatch<SetStateAction<LatLng | null>>;
+  listaLugares: { latitude: string; longitude: string }[];
+  setListaLugares: Dispatch<
+    SetStateAction<{ latitude: string; longitude: string }[]>
+  >;
 }) {
+  const router = useRouter();
   useMapEvents({
+    load: () => {},
     click: (e) => {
-      setPosition(e.latlng);
+      listaLugares.push({
+        latitude: e.latlng.lat.toString(),
+        longitude: e.latlng.lng.toString(),
+      });
+      setListaLugares(listaLugares);
+      router.refresh();
     },
   });
 
