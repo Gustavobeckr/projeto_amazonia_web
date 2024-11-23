@@ -12,9 +12,8 @@ import {
 } from "../../components/Form/arvore/ValidacaoCadastroArvore";
 import { Form } from "../../components/Form";
 import { parseCookies } from "nookies";
-import { redirect, RedirectType } from "next/navigation";
-import { useRouter } from "next/router";
-import { CircularProgress } from "@mui/material";
+import { redirect, RedirectType, useRouter } from "next/navigation";
+import { Alert, CircularProgress } from "@mui/material";
 
 const RichTextEditor = dynamic(
   () => import("@/app/components/Form/RichTextEditor/RichTextEditor"),
@@ -23,6 +22,8 @@ const RichTextEditor = dynamic(
 const Map = dynamic(() => import("../../components/Map"), { ssr: false });
 
 export default function CadastroArvore() {
+  const router = useRouter();
+
   useEffect(() => {
     const { AMAZONDEX_TOKEN: token } = parseCookies();
     if (!token) {
@@ -61,9 +62,9 @@ export default function CadastroArvore() {
     setIsLoading(true);
     const response = await cadastrarArvore(data);
     setIsLoading(false);
-    // if (response) {
-    //   redirect("/home");
-    // }
+    if (response) {
+      router.replace("/home");
+    }
   };
 
   function addNovaFoto() {

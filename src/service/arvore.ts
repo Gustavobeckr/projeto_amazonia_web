@@ -60,6 +60,20 @@ function montarBodyCriarArvore(
     paisagismoCommand: {
       descricao: data.paisagismoDescr,
     },
+    aproveitamentoCommand: {
+      descricao: data.aproveitamentoDescr,
+      alimentacaoCommand: {
+        dadosNutricionais: data.aproveitamentoAlimentacaoDadosNutricionas,
+        formasConsumo: data.aproveitamentoAlimentacaoFormaConsumo,
+      },
+      bioatividadeCommand: {
+        descricao: data.aproveitamentoBioAtividadeDescr,
+      },
+      biotecnologiaCommand: {
+        composicao: data.aproveitamentoBioTecComposicao,
+        potenciaBioprodutos: data.aproveitamentoBioTecBioProdutos,
+      },
+    },
   };
 }
 

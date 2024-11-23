@@ -9,6 +9,7 @@ export type ArvoreCommand = {
   fotoArvoreCommand: FotoArvoreCommand[] | null;
   cultivoCommand: CultivoCommand;
   paisagismoCommand: PaisagismoCommand;
+  aproveitamentoCommand: AproveitamentoCommand;
 };
 
 export type AproveitamentoCommand = ComboCommand & {
