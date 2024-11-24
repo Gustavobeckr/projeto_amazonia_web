@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const mimeTypePermitido = ["image/png", "image/jpeg"];
+// const mimeTypePermitido = ["image/png", "image/jpeg"];
 
 const FotoArvoreCommandSchema = z.object({
   fotoId: z.number().nullable(),

@@ -18,6 +18,7 @@ export const useCadastroArvore = () => {
       return true;
     } catch (error) {
       setServiceError(true);
+      console.log(error);
       return false;
     }
   }
@@ -28,6 +29,7 @@ export const useCadastroArvore = () => {
       return fotoId;
     } catch (error) {
       setServiceError(true);
+      console.log(error);
       return false;
     }
   }

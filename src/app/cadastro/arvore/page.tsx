@@ -13,7 +13,7 @@ import {
 import { Form } from "../../components/Form";
 import { parseCookies } from "nookies";
 import { redirect, RedirectType, useRouter } from "next/navigation";
-import { Alert, CircularProgress } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 
 const RichTextEditor = dynamic(
   () => import("@/app/components/Form/RichTextEditor/RichTextEditor"),

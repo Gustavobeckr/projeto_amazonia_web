@@ -1,16 +1,12 @@
-import { LatLng } from "leaflet";
-import { NextRouter, Router } from "next/router";
 import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
-import { useFieldArray, useFormContext } from "react-hook-form";
 
 type MapProps = {
   listaLugares: { latitude: string; longitude: string }[] | [];
   setListaLugares: Dispatch<
     SetStateAction<{ latitude: string; longitude: string }[] | []>
   >;
-  // router: NextRouter;
 };
 
 // var greenIcon = L.icon({
