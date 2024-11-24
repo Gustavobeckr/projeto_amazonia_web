@@ -4,7 +4,7 @@ import NavBar from "./components/NavBar";
 import { AuthProvider } from "./context/AuthContext";
 
 export const metadata: Metadata = {
-  title: "Projeto Amazônia",
+  title: "AmazonDex",
   description: "Cadastre árvores da amazônia",
 };
 
