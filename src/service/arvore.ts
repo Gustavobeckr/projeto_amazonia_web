@@ -1,10 +1,6 @@
 import { ArvoreCommandFormData } from "@/app/components/Form/arvore/ValidacaoCadastroArvore";
 import { axiosRequest } from "@/lib/axios";
-import {
-  ArvoreCommand,
-  BiologiaReprodutivaEnum,
-  TipoCuidadoEnum,
-} from "@/types/arvore";
+import { ArvoreCommand, TipoCuidadoEnum } from "@/types/arvore";
 import { AxiosError } from "axios";
 import { parseCookies } from "nookies";
 
