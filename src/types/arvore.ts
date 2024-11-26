@@ -28,7 +28,7 @@ export type BioatividadeCommand = ComboCommand;
 
 export type BiologiaReprodutivaCommand = {
   id?: number;
-  tipo: BiologiaReprodutivaEnum;
+  tipo: string;
   descricao: string;
 };
 
@@ -72,7 +72,7 @@ export type PaisagismoFotoCommand = {
 
 export enum BiologiaReprodutivaEnum {
   FRUTIFICACAO = "Frutificação",
-  DISPERCAO = "Disperção",
+  DISPERSAO = "Dispersão",
 }
 
 export enum TipoCuidadoEnum {

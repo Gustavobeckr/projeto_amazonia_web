@@ -14,6 +14,7 @@ import { Form } from "../../components/Form";
 import { parseCookies } from "nookies";
 import { redirect, RedirectType, useRouter } from "next/navigation";
 import { CircularProgress } from "@mui/material";
+import { BiologiaReprodutivaEnum } from "@/types/arvore";
 
 const RichTextEditor = dynamic(
   () => import("@/app/components/Form/RichTextEditor/RichTextEditor"),
@@ -149,8 +150,12 @@ export default function CadastroArvore() {
                   Tipo Biologia Reprodutiva
                 </Form.Label>
                 <Form.SelectInput
+                  value={BiologiaReprodutivaEnum.FRUTIFICACAO}
                   name="biologiaReprodutivaTipo"
-                  enum={["Frutificação", "Dispersão"]}
+                  enum={[
+                    BiologiaReprodutivaEnum.DISPERSAO,
+                    BiologiaReprodutivaEnum.FRUTIFICACAO,
+                  ]}
                 />
                 <Form.ErrorMessage field="biologiaReprodutivaTipo" />
               </Form.Field>
