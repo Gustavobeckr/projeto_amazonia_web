@@ -40,7 +40,7 @@ function montarBodyCriarArvore(
     aspectosEcologicos: data.aspectosEcologicos,
     regeneracaoNatural: data.regeneracaoNatural,
     biologiaReprodutivaCommand: {
-      tipo: data.biologiaReprodutivaTipo as BiologiaReprodutivaEnum,
+      tipo: data.biologiaReprodutivaTipo!,
       descricao: data.biologiaReprodutivaDescr,
     },
     ocorrenciaNaturalCommand: listaLugares,
