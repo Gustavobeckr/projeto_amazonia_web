@@ -5,6 +5,7 @@ import {
   BiologiaReprodutivaEnum,
   TipoCuidadoEnum,
 } from "@/types/arvore";
+import { AxiosError } from "axios";
 import { parseCookies } from "nookies";
 
 export async function criarArvore(
@@ -92,5 +93,15 @@ export async function uploadFotoArvoreService(foto: Blob): Promise<number> {
     return response.data.data;
   } catch (error) {
     throw new Error("Erro ao fazer upload: " + error);
+  }
+}
+
+export default async function buscarTodasArvores() {
+  try {
+    const response = await axiosRequest.get("arvore/list");
+    return response.data.data;
+  } catch (error) {
+    const erro = error as AxiosError;
+    throw new Error("Erro ao buscar arvores cadastradas: " + erro.message);
   }
 }
